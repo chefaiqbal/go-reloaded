@@ -36,13 +36,12 @@ To use the Text Modification Tool, follow these steps:
 4. Run the following command to build the program:
 go build
 
-lua
-Copy code
+
 5. Run the program with the desired input and output files:
 ./text-modification-tool <input_file> <output_file>
 
-vbnet
-Copy code
+
+
 Replace `<input_file>` with the path to the file containing the text to be modified and `<output_file>` with the desired path to save the modified text.
 6. The program will process the input file, apply the specified modifications, and save the result in the output file.
 
