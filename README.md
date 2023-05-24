@@ -1,52 +1,32 @@
-# Text Modification Tool
+# Text Modification Tool (In Development)
 
-The Text Modification Tool is a command-line program written in Go that allows you to modify text based on certain rules and patterns. It provides various functionalities to transform and manipulate the input text according to specific patterns and criteria.
+This tool will allow you to modify text based on specified rules. It will accept an input file containing the text to be modified, apply the specified modifications, and write the modified text to an output file.
 
-## Features
+## Plan
 
-The Text Modification Tool supports the following features:
+1. **Read the input file:** The tool will accept the input and output file names as command-line arguments. It will open and read the contents of the input file into a string variable.
 
-- Conversion of hexadecimal and binary numbers:
-  - Replaces instances of (hex) with the decimal version of the preceding hexadecimal number.
-  - Replaces instances of (bin) with the decimal version of the preceding binary number.
+2. **Parse the modifications:** A function will be defined to take the text as input and return the modified text. It will iterate over the text and search for the specified modifications. Regular expressions or string manipulation will be used to identify and extract the modification details. The appropriate modification will be applied based on the provided rules.
 
-- Text case modification:
-  - Converts the word before (up) to uppercase.
-  - Converts the word before (low) to lowercase.
-  - Converts the word before (cap) to capitalized form.
+3. **Apply modifications:** Functions will be implemented for each modification type:
+   - Convert hexadecimal to decimal: `ConvertHexToDecimal(hex string) string`
+   - Convert binary to decimal: `ConvertBinaryToDecimal(binary string) string`
+   - Convert to uppercase: `ConvertToUppercase(word string) string`
+   - Convert to lowercase: `ConvertToLowercase(word string) string`
+   - Capitalize a word: `CapitalizeWord(word string) string`
+   - Apply case modification to a specific number of words: `ModifyWordsCase(text string, caseType string, wordCount int) string`
 
-- Customized case modification:
-  - If a number appears next to (up), (low), or (cap), the program modifies the specified number of preceding words accordingly.
+   The corresponding modification function will be applied based on the parsed modifications.
 
-- Punctuation handling:
-  - Properly formats punctuation marks (. , ! ? : ;) by placing them close to the previous word and with a space separating them from the next word.
-  - Handles groups of punctuation marks (...) or (!?).
-  - Preserves the placement of single quotation marks (' ') around words or phrases.
+4. **Write the modified text to the output file:** The tool will open the output file for writing and write the modified text to the output file.
 
-- Indefinite article correction:
-  - Changes the indefinite article 'a' to 'an' if the next word begins with a vowel (a, e, i, o, u) or an 'h'.
+5. **Test and validate:** Test cases will be created to cover different scenarios, including various modifications and edge cases. Unit tests will be written for the implemented functions. The correctness of the output will be validated against the expected results.
 
 ## Usage
 
-To use the Text Modification Tool, follow these steps:
+To use this tool:
 
-1. Install Go on your system if it is not already installed.
-2. Clone the repository or download the source code.
-3. Open a terminal and navigate to the project directory.
-4. Run the following command to build the program:
-go build
+1. Clone the repository:
 
-
-5. Run the program with the desired input and output files:
-./text-modification-tool <input_file> <output_file>
-
-
-
-Replace `<input_file>` with the path to the file containing the text to be modified and `<output_file>` with the desired path to save the modified text.
-6. The program will process the input file, apply the specified modifications, and save the result in the output file.
-
-## Language and Dependencies
-
-The Text Modification Tool is written in the Go programming language (Golang). It leverages Go's standard library for file I/O, regular expressions, string manipulation, and other operations.
-
-No external dependencies are required to run the program.
+   ```shell
+   git clone "Soon"
