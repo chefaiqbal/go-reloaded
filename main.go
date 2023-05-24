@@ -9,165 +9,139 @@ import (
 	"strings"
 )
 
-func ConvertHexToDecimal(hex string) string {
-	decimal, err := strconv.ParseInt(hex, 16, 64)
-	if err != nil {
-		// Handle conversion error
-		return hex
-	}
-	return strconv.FormatInt(decimal, 10)
-}
-
-func ConvertBinaryToDecimal(binary string) string {
-	decimal, err := strconv.ParseInt(binary, 2, 64)
-	if err != nil {
-		// Handle conversion error
-		return binary
-	}
-	return strconv.FormatInt(decimal, 10)
-}
-
-func ConvertToUppercase(word string) string {
-	// Convert the word to uppercase
-	return strings.ToUpper(word)
-}
-
-func ConvertToLowercase(word string) string {
-	// Convert the word to lowercase
-	return strings.ToLower(word)
-}
-
-func CapitalizeWord(word string) string {
-	// Capitalize the first letter of the word
-	if len(word) > 0 {
-		return strings.ToUpper(string(word[0])) + word[1:]
-	}
-	return word
-}
-
-func ModifyWordsCase(text string, caseType string, wordCount int) string {
-	words := strings.Fields(text)
-	if wordCount > len(words) {
-		wordCount = len(words)
-	}
-
-	switch caseType {
-	case "up":
-		for i := 0; i < wordCount; i++ {
-			words[i] = ConvertToUppercase(words[i])
-		}
-	case "low":
-		for i := 0; i < wordCount; i++ {
-			words[i] = ConvertToLowercase(words[i])
-		}
-	case "cap":
-		for i := 0; i < wordCount; i++ {
-			words[i] = CapitalizeWord(words[i])
-		}
-	}
-
-	return strings.Join(words, " ")
-}
-
 func main() {
-	// Check if the correct number of command-line arguments is provided
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: go run main.go input_file output_file")
+	if len(os.Args) != 3 {
+		fmt.Println("Usage: go run . <input file> <output file>")
 		os.Exit(1)
 	}
 
 	inputFile := os.Args[1]
 	outputFile := os.Args[2]
 
-	// Read the input file
-	inputText, err := ioutil.ReadFile(inputFile)
+	inputData, err := ioutil.ReadFile(inputFile)
 	if err != nil {
-		fmt.Printf("Error reading the input file: %v\n", err)
+		fmt.Println("Error reading input file:", err)
 		os.Exit(1)
 	}
 
-	// Convert input text to string
-	text := string(inputText)
+	text := string(inputData)
+	formattedText := formatText(text)
 
-	// Define regular expressions for different modifications
-	hexRegex := regexp.MustCompile(`\((hex)\)`)
-	binRegex := regexp.MustCompile(`\((bin)\)`)
-	upRegex := regexp.MustCompile(`\((up)\)`)
-	lowRegex := regexp.MustCompile(`\((low)\)`)
-	capRegex := regexp.MustCompile(`\((cap)\)`)
-	modifyRegex := regexp.MustCompile(`\((up|low|cap),\s*(\d+)\)`)
-
-	// Parse and apply modifications
-	modifiedText := text
-
-	// Replace (hex) occurrences with decimal versions
-	modifiedText = hexRegex.ReplaceAllStringFunc(modifiedText, func(match string) string {
-		word := strings.TrimSpace(strings.TrimSuffix(match, "(hex)"))
-		decimal := ConvertHexToDecimal(word)
-		return decimal
-	})
-
-	// Replace (bin) occurrences with decimal versions
-	modifiedText = binRegex.ReplaceAllStringFunc(modifiedText, func(match string) string {
-		word := strings.TrimSpace(strings.TrimSuffix(match, "(bin)"))
-		decimal := ConvertBinaryToDecimal(word)
-		return decimal
-	})
-
-	// Replace (up) occurrences with uppercase words
-	modifiedText = upRegex.ReplaceAllStringFunc(modifiedText, func(match string) string {
-		word := strings.TrimSpace(strings.TrimSuffix(match, "(up)"))
-		return ConvertToUppercase(word)
-	})
-
-	// Replace (low) occurrences with lowercase words
-	modifiedText = lowRegex.ReplaceAllStringFunc(modifiedText, func(match string) string {
-		word := strings.TrimSpace(strings.TrimSuffix(match, "(low)"))
-		return ConvertToLowercase(word)
-	})
-
-	// Replace (cap) occurrences with capitalized words
-	modifiedText = capRegex.ReplaceAllStringFunc(modifiedText, func(match string) string {
-		word := strings.TrimSpace(strings.TrimSuffix(match, "(cap)"))
-		return CapitalizeWord(word)
-	})
-
-	// Replace (up, n), (low, n), (cap, n) occurrences with modified words based on word count
-	modifiedText = modifyRegex.ReplaceAllStringFunc(modifiedText, func(match string) string {
-		groups := modifyRegex.FindStringSubmatch(match)
-		caseType := groups[1]
-		wordCountStr := groups[2]
-		wordCount, _ := strconv.Atoi(wordCountStr)
-
-		word := strings.TrimSpace(strings.TrimSuffix(match, groups[0]))
-		return ModifyWordsCase(word, caseType, wordCount)
-	})
-
-	// Format punctuation marks
-	modifiedText = strings.ReplaceAll(modifiedText, " ,", ",")
-	modifiedText = strings.ReplaceAll(modifiedText, " .", ".")
-	modifiedText = strings.ReplaceAll(modifiedText, " !", "!")
-	modifiedText = strings.ReplaceAll(modifiedText, " ?", "?")
-	modifiedText = strings.ReplaceAll(modifiedText, " :", ":")
-	modifiedText = strings.ReplaceAll(modifiedText, " ;", ";")
-
-	// Format ellipsis and question marks
-	modifiedText = strings.ReplaceAll(modifiedText, "...", "...")
-	modifiedText = strings.ReplaceAll(modifiedText, "!?", "!?")
-
-	// Format words enclosed in single quotes
-	modifiedText = strings.ReplaceAll(modifiedText, " '", "'")
-	modifiedText = strings.ReplaceAll(modifiedText, "' ", "'")
-
-	// Replace "a" with "an" when followed by a vowel or 'h'
-	modifiedText = strings.ReplaceAll(modifiedText, " a ", " an ")
-
-	// Write the modified text to the output file
-	err = ioutil.WriteFile(outputFile, []byte(modifiedText), 0644)
+	err = ioutil.WriteFile(outputFile, []byte(formattedText), 0644)
 	if err != nil {
-		fmt.Printf("Error writing to the output file: %v\n", err)
+		fmt.Println("Error writing output file:", err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Modification complete!")
+	fmt.Println("Text conversion successful")
+}
+
+func formatText(text string) string {
+    // Define regex patterns
+    hexPattern := regexp.MustCompile(`\b([0-9A-Fa-f]+)\s+\(hex\)`)
+    binPattern := regexp.MustCompile(`\b([01]+)\s+\(bin\)`)
+    upPattern := regexp.MustCompile(`\b(\w+)\s+\(up\)`)
+    lowPattern := regexp.MustCompile(`\b(\w+)\s+\(low\)`)
+    capPattern := regexp.MustCompile(`\b(\w+)\s+\(cap\)`)
+    upNumPattern := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(up,\s*(\d+)\)`)
+    lowNumPattern := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(low,\s*(\d+)\)`)
+    capNumPattern := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(cap,\s*(<IPAddress>)`)
+    puncPattern := regexp.MustCompile(`\s+([.,!?:;])`)
+    puncGroupPattern := regexp.MustCompile(`([.,!?:;])\s+([.,!?:;])`)
+    quotePattern := regexp.MustCompile(`'\s+([^']{1,})\s+'`)
+    aAnPattern := regexp.MustCompile(`\ba\s+([aeiouhAEIOUH])`)
+
+    // Replace hex and bin
+    text = hexPattern.ReplaceAllStringFunc(text, func(s string) string {
+        hexNum := hexPattern.FindStringSubmatch(s)[1]
+        num, _ := strconv.ParseInt(hexNum, 16, 64)
+        return fmt.Sprintf("%d", num)
+    })
+    text = binPattern.ReplaceAllStringFunc(text, func(s string) string {
+        binNum := binPattern.FindStringSubmatch(s)[1]
+        num, _ := strconv.ParseInt(binNum, 2, 64)
+        return fmt.Sprintf("%d", num)
+    })
+
+    // Replace up, low and cap
+    text = upPattern.ReplaceAllStringFunc(text, func(s string) string {
+        word := upPattern.FindStringSubmatch(s)[1]
+        return strings.ToUpper(word)
+    })
+    text = lowPattern.ReplaceAllStringFunc(text, func(s string) string {
+        word := lowPattern.FindStringSubmatch(s)[1]
+        return strings.ToLower(word)
+    })
+    text = capPattern.ReplaceAllStringFunc(text, func(s string) string {
+        word := capPattern.FindStringSubmatch(s)[1]
+        return strings.Title(word)
+    })
+
+    // Replace upNum, lowNum and capNum
+    text = upNumPattern.ReplaceAllStringFunc(text, func(s string) string {
+        match := upNumPattern.FindStringSubmatch(s)
+        numWordsStr := match[1]
+        numWordsSlice := strings.Fields(numWordsStr)
+        numWordsToChangeStr := match[2]
+        numWordsToChangeInt, _ := strconv.Atoi(numWordsToChangeStr)
+
+        if numWordsToChangeInt > len(numWordsSlice) {
+            numWordsToChangeInt = len(numWordsSlice)
+        }
+
+        for i:=len(numWordsSlice)-numWordsToChangeInt; i<len(numWordsSlice); i++ {
+            numWordsSlice[i] = strings.ToUpper(numWordsSlice[i])
+        }
+
+        return strings.Join(numWordsSlice," ")
+        
+    })
+    text = lowNumPattern.ReplaceAllStringFunc(text, func(s string) string {
+        match := lowNumPattern.FindStringSubmatch(s)
+        numWordsStr := match[1]
+        numWordsSlice := strings.Fields(numWordsStr)
+        numWordsToChangeStr := match[2]
+        numWordsToChangeInt, _ := strconv.Atoi(numWordsToChangeStr)
+
+        if numWordsToChangeInt > len(numWordsSlice) {
+            numWordsToChangeInt = len(numWordsSlice)
+        }
+
+        for i:=len(numWordsSlice)-numWordsToChangeInt; i<len(numWordsSlice); i++ {
+            numWordsSlice[i] = strings.ToLower(numWordsSlice[i])
+        }
+
+        return strings.Join(numWordsSlice," ")
+        
+    })
+    text = capNumPattern.ReplaceAllStringFunc(text, func(s string) string {
+        match := capNumPattern.FindStringSubmatch(s)
+        numWordsStr := match[1]
+        numWordsSlice := strings.Fields(numWordsStr)
+        numWordsToChangeStr := match[2]
+        numWordsToChangeInt, _ := strconv.Atoi(numWordsToChangeStr)
+
+        if numWordsToChangeInt > len(numWordsSlice) {
+            numWordsToChangeInt = len(numWordsSlice)
+        }
+
+        for i:=len(numWordsSlice)-numWordsToChangeInt; i<len(numWordsSlice); i++ {
+            numWordsSlice[i] = strings.Title(numWordsSlice[i])
+        }
+
+        return strings.Join(numWordsSlice," ")
+        
+    })
+
+    // Replace punctuation
+    text = puncPattern.ReplaceAllString(text,"$1")
+    text = puncGroupPattern.ReplaceAllString(text,"$1$2")
+    text = quotePattern.ReplaceAllString(text,"'$1'")
+
+    // Replace a/an
+	text = aAnPattern.ReplaceAllStringFunc(text, func(s string) string {
+		return "an " + aAnPattern.FindStringSubmatch(s)[1]
+	})
+
+	return text
 }
