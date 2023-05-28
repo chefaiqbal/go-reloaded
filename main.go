@@ -50,6 +50,8 @@ func formatText(text string) string {
 	puncGroupPattern := regexp.MustCompile(`([.,!?:;])\s+([.,!?:;])`)
 	quotePattern := regexp.MustCompile(`'\s+([^']{1,})\s+'`)
 	aAnPattern := regexp.MustCompile(`\ba\s+([aeiouhAEIOUH])`)
+	text = regexp.MustCompile(`,(\S)`).ReplaceAllString(text, ", $1")
+	//
 
 	// Replace hex and bin
 	text = hexPattern.ReplaceAllStringFunc(text, func(s string) string {
