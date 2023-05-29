@@ -14,7 +14,7 @@ This tool will allow you to modify text based on specified rules. It will accept
    - Convert to uppercase: `ConvertToUppercase(word string) string` **Done and Tested - OK!**
    - Convert to lowercase: `ConvertToLowercase(word string) string` **Done and Tested - OK!**
    - Capitalize a word: `CapitalizeWord(word string) string` **Done and Tested - OK!**
-   - Apply case modification to a specific number of words: `ModifyWordsCase(text string, caseType string, wordCount int) string` **Done and Tested - `PuncfunC **Whitespacing**` issue found with `'`**
+   - Apply case modification to a specific number of words: `ModifyWordsCase(text string, caseType string, wordCount int) string` **Done and Tested - OK!**
 
    The corresponding modification function will be applied based on the parsed modifications.
 
