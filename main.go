@@ -25,7 +25,7 @@ func main() {
 	}
 
 	text := string(inputData)
-	formattedText := formatText(text)
+	formattedText := FormatText(text)
 
 	err = ioutil.WriteFile(outputFile, []byte(formattedText), 0o644)
 	if err != nil {
@@ -36,52 +36,52 @@ func main() {
 	fmt.Println("Text conversion successful")
 }
 
-func formatText(text string) string {
+func FormatText(text string) string {
 	// Define regex patterns
-	hexPattern := regexp.MustCompile(`\b([0-9A-Fa-f]+)\s+\(hex\)`)
-	binPattern := regexp.MustCompile(`\b([01]+)\s+\(bin\)`)
-	upPattern := regexp.MustCompile(`\b(\w+)\s+\(up\)`)
-	lowPattern := regexp.MustCompile(`\b(\w+)\s+\(low\)`)
-	capPattern := regexp.MustCompile(`\b(\w+)\s+\(cap\)`)
-	upNumPattern := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(up,\s*(\d+)\)`)
-	lowNumPattern := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(low,\s*(\d+)\)`)
-	capNumPattern := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(cap,\s*(\d+)\)`)
-	puncPattern := regexp.MustCompile(`\s+([.,!?:;])`)
-	puncGroupPattern := regexp.MustCompile(`([.,!?:;])\s+([.,!?:;])`)
-	quotePattern := regexp.MustCompile(`'\s+([^']{1,})\s+'`)
-	aAnPattern := regexp.MustCompile(`\ba\s+([aeiouhAEIOUH])`)
+	hexRegex := regexp.MustCompile(`\b([0-9A-Fa-f]+)\s+\(hex\)`)
+	binRegex := regexp.MustCompile(`\b([01]+)\s+\(bin\)`)
+	upRegex := regexp.MustCompile(`\b(\w+)\s+\(up\)`)
+	lowRegex := regexp.MustCompile(`\b(\w+)\s+\(low\)`)
+	capRegex := regexp.MustCompile(`\b(\w+)\s+\(cap\)`)
+	upNumRegex := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(up,\s*(\d+)\)`)
+	lowNumRegex := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(low,\s*(\d+)\)`)
+	capNumRegex := regexp.MustCompile(`\b((?:\w+\s+){0,}\w+)\s+\(cap,\s*(\d+)\)`)
+	puncRegex := regexp.MustCompile(`\s+([.,!?:;])`)
+	puncGroupRegex := regexp.MustCompile(`([.,!?:;])\s+([.,!?:;])`)
+	quoteRegex := regexp.MustCompile(`'\s+(.*?)\s+'`)
+	aAnRegex := regexp.MustCompile(`\ba\s+([aeiouhAEIOUH])`)
 	text = regexp.MustCompile(`,(\S)`).ReplaceAllString(text, ", $1")
 	//
 
 	// Replace hex and bin
-	text = hexPattern.ReplaceAllStringFunc(text, func(s string) string {
-		hexNum := hexPattern.FindStringSubmatch(s)[1]
+	text = hexRegex.ReplaceAllStringFunc(text, func(s string) string {
+		hexNum := hexRegex.FindStringSubmatch(s)[1]
 		num, _ := strconv.ParseInt(hexNum, 16, 64)
 		return fmt.Sprintf("%d", num)
 	})
-	text = binPattern.ReplaceAllStringFunc(text, func(s string) string {
-		binNum := binPattern.FindStringSubmatch(s)[1]
+	text = binRegex.ReplaceAllStringFunc(text, func(s string) string {
+		binNum := binRegex.FindStringSubmatch(s)[1]
 		num, _ := strconv.ParseInt(binNum, 2, 64)
 		return fmt.Sprintf("%d", num)
 	})
 
 	// Replace up, low and cap
-	text = upPattern.ReplaceAllStringFunc(text, func(s string) string {
-		word := upPattern.FindStringSubmatch(s)[1]
+	text = upRegex.ReplaceAllStringFunc(text, func(s string) string {
+		word := upRegex.FindStringSubmatch(s)[1]
 		return strings.ToUpper(word)
 	})
-	text = lowPattern.ReplaceAllStringFunc(text, func(s string) string {
-		word := lowPattern.FindStringSubmatch(s)[1]
+	text = lowRegex.ReplaceAllStringFunc(text, func(s string) string {
+		word := lowRegex.FindStringSubmatch(s)[1]
 		return strings.ToLower(word)
 	})
-	text = capPattern.ReplaceAllStringFunc(text, func(s string) string {
-		word := capPattern.FindStringSubmatch(s)[1]
+	text = capRegex.ReplaceAllStringFunc(text, func(s string) string {
+		word := capRegex.FindStringSubmatch(s)[1]
 		return strings.Title(word)
 	})
 
 	// Replace upNum, lowNum and capNum
-	text = upNumPattern.ReplaceAllStringFunc(text, func(s string) string {
-		match := upNumPattern.FindStringSubmatch(s)
+	text = upNumRegex.ReplaceAllStringFunc(text, func(s string) string {
+		match := upNumRegex.FindStringSubmatch(s)
 		numWordsStr := match[1]
 		numWordsSlice := strings.Fields(numWordsStr)
 		numWordsToChangeStr := match[2]
@@ -97,8 +97,8 @@ func formatText(text string) string {
 
 		return strings.Join(numWordsSlice, " ")
 	})
-	text = lowNumPattern.ReplaceAllStringFunc(text, func(s string) string {
-		match := lowNumPattern.FindStringSubmatch(s)
+	text = lowNumRegex.ReplaceAllStringFunc(text, func(s string) string {
+		match := lowNumRegex.FindStringSubmatch(s)
 		numWordsStr := match[1]
 		numWordsSlice := strings.Fields(numWordsStr)
 		numWordsToChangeStr := match[2]
@@ -114,8 +114,8 @@ func formatText(text string) string {
 
 		return strings.Join(numWordsSlice, " ")
 	})
-	text = capNumPattern.ReplaceAllStringFunc(text, func(s string) string {
-		match := capNumPattern.FindStringSubmatch(s)
+	text = capNumRegex.ReplaceAllStringFunc(text, func(s string) string {
+		match := capNumRegex.FindStringSubmatch(s)
 		numWordsStr := match[1]
 		numWordsSlice := strings.Fields(numWordsStr)
 		numWordsToChangeStr := match[2]
@@ -133,13 +133,12 @@ func formatText(text string) string {
 	})
 
 	// Replace punctuation
-	text = puncPattern.ReplaceAllString(text, "$1")
-	text = puncGroupPattern.ReplaceAllString(text, "$1$2")
-	text = quotePattern.ReplaceAllString(text, "'$1'")
-
+	text = puncRegex.ReplaceAllString(text, "$1")
+	text = puncGroupRegex.ReplaceAllString(text, "$1$2")
+	text = quoteRegex.ReplaceAllString(text, "'$1'")
 	// Replace a/an
-	text = aAnPattern.ReplaceAllStringFunc(text, func(s string) string {
-		return "an " + aAnPattern.FindStringSubmatch(s)[1]
+	text = aAnRegex.ReplaceAllStringFunc(text, func(s string) string {
+		return "an " + aAnRegex.FindStringSubmatch(s)[1]
 	})
 
 	return text
